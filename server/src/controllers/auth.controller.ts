@@ -16,7 +16,7 @@ export const register = async (req: Request, res: Response) => {
         }
 
         const existingUser = await prisma.user.findFirst({
-            where: { OR: [{ email }] }
+            where: { email: email }
         });
 
         if (existingUser) {
