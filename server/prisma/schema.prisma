@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// Role: CUSTOMER, PROVIDER, ADMIN
+// AuthProvider: EMAIL, GOOGLE, PHONE
+// BookingStatus: PENDING, ACCEPTED, IN_PROGRESS, COMPLETED, CANCELLED
+
+model User {
+  id           String   @id @default(uuid())
+  email        String?  @unique
+  phone        String?  @unique
+  password     String?
+  name         String
+  role         String   @default("CUSTOMER")
+  authProvider String   @default("EMAIL")
+  firebaseUid  String?  @unique
+  avatar       String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  providerProfile ProviderProfile?
+  bookings        Booking[]        @relation("CustomerBookings")
+  reviews         Review[]
+  products        Product[]
+  orders          Order[]
+}
+
+model ProviderProfile {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+  bio         String?
+  skills      String   @default("")
+  experience  Int?
+  rating      Float    @default(0)
+  reviewCount Int      @default(0)
+  isVerified  Boolean  @default(false)
+  location    String?
+
+  services    Service[]
+  bookings    Booking[] @relation("ProviderBookings")
+}
+
+model Category {
+  id       String    @id @default(uuid())
+  name     String    @unique
+  slug     String    @unique
+  icon     String?
+  services Service[]
+}
+
+model Service {
+  id          String          @id @default(uuid())
+  title       String
+  description String?
+  price       Float
+  duration    Int?
+  providerId  String
+  provider    ProviderProfile @relation(fields: [providerId], references: [id])
+  categoryId  String?
+  category    Category?       @relation(fields: [categoryId], references: [id])
+  bookings    Booking[]
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  price       Float
+  stock       Int      @default(0)
+  category    String   @default("General")
+  images      String   @default("")
+  artisanId   String
+  artisan     User     @relation(fields: [artisanId], references: [id])
+  createdAt   DateTime @default(now())
+  orderItems  OrderItem[]
+}
+
+model Booking {
+  id          String   @id @default(uuid())
+  customerId  String
+  customer    User     @relation("CustomerBookings", fields: [customerId], references: [id])
+  providerId  String
+  provider    ProviderProfile @relation("ProviderBookings", fields: [providerId], references: [id])
+  serviceId   String
+  service     Service  @relation(fields: [serviceId], references: [id])
+  status      String   @default("PENDING")
+  startTime   DateTime
+  endTime     DateTime?
+  totalPrice  Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Order {
+  id          String      @id @default(uuid())
+  customerId  String
+  customer    User        @relation(fields: [customerId], references: [id])
+  status      String
+  totalAmount Float
+  items       OrderItem[]
+  createdAt   DateTime    @default(now())
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Float
+}
+
+model Review {
+  id          String   @id @default(uuid())
+  rating      Int
+  comment     String?
+  reviewerId  String
+  reviewer    User     @relation(fields: [reviewerId], references: [id])
+  targetId    String
+  targetType  String
+  createdAt   DateTime @default(now())
+}
