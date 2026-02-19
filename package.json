@@ -8,8 +8,7 @@
         "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\""
     },
     "devDependencies": {
-        "concurrently": "^8.2.2",
-        "react-scripts": "5.0.1"
+        "concurrently": "^8.2.2"
     },
     "dependencies": {
         "firebase": "^12.9.0"
