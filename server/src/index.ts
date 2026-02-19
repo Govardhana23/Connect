@@ -6,6 +6,7 @@ import { Server } from 'socket.io';
 import authRoutes from './routes/auth.routes';
 import marketplaceRoutes from './routes/marketplace.routes';
 import productRoutes from './routes/product.routes';
+import financialRoutes from './routes/financial.routes';
 import { setupSocket } from './socket';
 
 dotenv.config();
@@ -22,7 +23,7 @@ const io = new Server(httpServer, {
 app.use(cors());
 app.use(express.json());
 
-const PORT = process.env.PORT || 5000;
+
 
 app.get('/', (req, res) => {
     res.send('Hyper-Local Service Platform API is running');
@@ -32,10 +33,17 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/marketplace', marketplaceRoutes);
 app.use('/api/marketplace', productRoutes);
+app.use('/api/financial', financialRoutes);
 
 // Socket.io Setup
 setupSocket(io);
 
-httpServer.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+const PORT = process.env.PORT || 5000;
+
+if (process.env.NODE_ENV !== 'production') {
+    httpServer.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
+}
+
+export default app;

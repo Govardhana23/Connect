@@ -28,10 +28,29 @@ export const createCategory = async (req: Request, res: Response) => {
 // Services
 export const getServices = async (req: Request, res: Response) => {
     try {
-        const { categoryId, providerId } = req.query;
+        const { categoryId, providerId, location } = req.query;
         const where: any = {};
         if (categoryId) where.categoryId = String(categoryId);
         if (providerId) where.providerId = String(providerId);
+
+        // If location is provided, filter providers by location first
+        if (location) {
+            const providersInLocation = await prisma.providerProfile.findMany({
+                where: {
+                    location: {
+                        contains: String(location) // SQLite doesn't support insensitive directly easily without raw, but contains is good enough for now
+                    }
+                },
+                select: { id: true }
+            });
+            const providerIds = providersInLocation.map(p => p.id);
+            if (providerIds.length > 0) {
+                where.providerId = { in: providerIds };
+            } else {
+                // If no providers found in that location, return empty
+                return res.json([]);
+            }
+        }
 
         const services = await prisma.service.findMany({
             where,

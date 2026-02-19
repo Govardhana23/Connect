@@ -131,6 +131,7 @@ const Dashboard = () => {
                             {[
                                 { to: '/services', label: 'Book a Service', icon: '🔧' },
                                 { to: '/marketplace', label: 'Browse Marketplace', icon: '🛒' },
+                                { to: '/financial-plan', label: 'Financial Plan', icon: '💰' },
                                 { to: '/profile', label: 'Edit Profile', icon: '👤' },
                             ].map(action => (
                                 <Link key={action.to} to={action.to} className="card" style={{ padding: '12px 16px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12 }}>

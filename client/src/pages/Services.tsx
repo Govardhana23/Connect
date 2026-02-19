@@ -26,34 +26,46 @@ const Services = () => {
         tutoring: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&auto=format',
     };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [catsRes, svcsRes] = await Promise.all([
-                    marketplaceAPI.getCategories(),
-                    marketplaceAPI.getServices()
-                ]);
-                const cats = catsRes.data;
-                const svcs = svcsRes.data;
+    const [location, setLocation] = useState('');
 
-                if (svcs && svcs.length > 0) {
-                    setCategories(cats);
-                    setServices(svcs);
-                } else {
-                    // Fallback to mock
-                    setCategories(mockCategories);
-                    setServices(mockServices);
-                }
-            } catch (err) {
-                console.warn('API unavailable, using local data');
+    const fetchData = async (loc?: string) => {
+        setLoading(true);
+        try {
+            const params: any = {};
+            if (loc) params.location = loc;
+
+            const [catsRes, svcsRes] = await Promise.all([
+                marketplaceAPI.getCategories(),
+                marketplaceAPI.getServices(params)
+            ]);
+            const cats = catsRes.data;
+            const svcs = svcsRes.data;
+
+            if (svcs) {
+                setCategories(cats);
+                setServices(svcs);
+            } else {
                 setCategories(mockCategories);
                 setServices(mockServices);
-            } finally {
-                setLoading(false);
             }
-        };
+        } catch (err) {
+            console.warn('API unavailable, using local data');
+            setCategories(mockCategories);
+            setServices(mockServices);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchData();
     }, []);
+
+    const handleLocationSearch = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            fetchData(location);
+        }
+    };
 
     const filtered = useMemo(() => {
         let result = [...services];
@@ -90,6 +102,16 @@ const Services = () => {
                 <div style={{ flex: 2, minWidth: 200, position: 'relative' }}>
                     <Search size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                     <input className="input" placeholder="Search services, providers..." value={search} onChange={e => setSearch(e.target.value)} style={{ paddingLeft: 40 }} />
+                </div>
+                <div style={{ flex: 1, minWidth: 150, position: 'relative' }}>
+                    <input
+                        className="input"
+                        placeholder="Location (e.g. Trichy)"
+                        value={location}
+                        onChange={e => setLocation(e.target.value)}
+                        onKeyDown={handleLocationSearch}
+                        style={{ paddingLeft: 12 }}
+                    />
                 </div>
                 <div style={{ position: 'relative', minWidth: 160 }}>
                     <select className="input" value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ appearance: 'none', paddingRight: 32, cursor: 'pointer' }}>

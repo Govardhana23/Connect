@@ -16,6 +16,7 @@ import Bookings from './pages/Bookings';
 import Chat from './pages/Chat';
 import Profile from './pages/Profile';
 import Checkout from './pages/Checkout';
+import FinancialPlan from './pages/FinancialPlan';
 import Login from './pages/Login';
 import Register from './pages/Register';
 
@@ -39,6 +40,7 @@ function App() {
                   <Route path="/chat" element={<Chat />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/checkout" element={<Checkout />} />
+                  <Route path="/financial-plan" element={<FinancialPlan />} />
                 </Route>
                 <Route element={<AuthLayout />}>
                   <Route path="/login" element={<Login />} />

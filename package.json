@@ -1,11 +1,14 @@
 {
-    "name": "Connect-monorepo",
-    "version": "1.0.0",
+    "name": "jaegerist-root",
+    "private": true,
+    "workspaces": [
+        "client",
+        "server"
+    ],
     "scripts": {
-        "install:all": "concurrently \"npm install --prefix client\" \"npm install --prefix server\"",
-        "dev:client": "npm run dev --prefix client",
-        "dev:server": "npm run dev --prefix server",
-        "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\""
+        "build": "npm install && npm run build -w client && npm run build -w server",
+        "dev": "npm run dev -w client",
+        "postinstall": "cd server && npx prisma generate"
     },
     "devDependencies": {
         "concurrently": "^8.2.2",
@@ -13,5 +16,8 @@
     },
     "dependencies": {
         "firebase": "^12.9.0"
+    },
+    "engines": {
+        "node": "18.x"
     }
 }

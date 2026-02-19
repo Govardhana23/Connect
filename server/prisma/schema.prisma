@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 // Role: CUSTOMER, PROVIDER, ADMIN
@@ -45,6 +45,18 @@ model ProviderProfile {
 
   services    Service[]
   bookings    Booking[] @relation("ProviderBookings")
+  financialPlan FinancialPlan?
+}
+
+model FinancialPlan {
+  id            String   @id @default(uuid())
+  providerId    String   @unique
+  provider      ProviderProfile @relation(fields: [providerId], references: [id])
+  monthlyIncome Float    @default(0)
+  savingsGoal   Float    @default(0)
+  expenseLimit  Float    @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Category {
