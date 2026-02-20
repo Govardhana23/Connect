@@ -68,11 +68,6 @@ const FinancialPlan = () => {
     const monthsToGoal = monthlySavings > 0 ? Math.ceil(savingsGoal / monthlySavings) : Infinity;
     const savingsRate = monthlyIncome > 0 ? (monthlySavings / monthlyIncome) * 100 : 0;
 
-    // 50/30/20 Rule Logic
-    const needs = monthlyIncome * 0.5;
-    const wants = monthlyIncome * 0.3;
-    const recommendedSavings = monthlyIncome * 0.2;
-
     const allocationData = [
         { name: 'Expenses', value: expenseLimit },
         { name: 'Savings', value: monthlySavings },
@@ -91,7 +86,7 @@ const FinancialPlan = () => {
         });
     }, [monthlySavings, savingsGoal]);
 
-    const CHART_COLORS = ['#e17055', '#00b894', '#6c5ce7', '#fdcb6e'];
+    if (isLoading) return <div style={{ padding: 40, textAlign: 'center' }}>Loading your plan...</div>;
 
     return (
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '40px 24px' }}>
