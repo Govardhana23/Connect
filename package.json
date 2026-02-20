@@ -8,7 +8,7 @@
     "scripts": {
         "build": "npm install && npm run build -w client && npm run build -w server",
         "dev": "npm run dev -w client",
-        "postinstall": "cd server && npx prisma generate"
+        "postinstall": "cd server && npx prisma@5.12.1 generate"
     },
     "devDependencies": {
         "concurrently": "^8.2.2",
