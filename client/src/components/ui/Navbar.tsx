@@ -15,11 +15,10 @@ const Navbar = () => {
         { to: '/', label: 'Home' },
         { to: '/services', label: 'Services' },
         { to: '/marketplace', label: 'Marketplace' },
-        ...(isAuthenticated ? [
-            { to: '/dashboard', label: 'Dashboard' },
-            { to: '/bookings', label: 'Bookings' },
-            { to: '/chat', label: 'Chat' },
-        ] : []),
+        { to: '/dashboard', label: 'Dashboard' },
+        { to: '/bookings', label: 'Bookings' },
+        { to: '/chat', label: 'Chat' },
+        { to: '/financial-plan', label: 'Growth Plan' },
     ];
 
     const isActive = (path: string) => location.pathname === path;

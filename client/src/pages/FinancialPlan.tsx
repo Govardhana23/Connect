@@ -49,6 +49,11 @@ const FinancialPlan = () => {
     });
 
     const handleSave = () => {
+        if (!user) {
+            addToast('Plan updated locally (Sign in to save permanently!)', 'info');
+            // For demo, just let the state update reflect in the chart (which it does automatically via state)
+            return;
+        }
         mutation.mutate({ monthlyIncome, savingsGoal, expenseLimit });
     };
 
