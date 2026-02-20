@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
@@ -6,8 +6,8 @@ import { useToast } from '../context/ToastContext';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const FinancialPlan = () => {
-    const { user } = useAuth();
-    const { toast } = useToast();
+    const { user, token } = useAuth();
+    const { addToast } = useToast();
     const queryClient = useQueryClient();
 
     const [monthlyIncome, setMonthlyIncome] = useState(0);
@@ -17,13 +17,12 @@ const FinancialPlan = () => {
     const { data: plan, isLoading } = useQuery({
         queryKey: ['financialPlan'],
         queryFn: async () => {
-            const token = await user?.getIdToken();
-            const res = await axios.get('http://localhost:5000/api/financial/financial-plan', {
+            const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/financial/financial-plan`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             return res.data;
         },
-        enabled: !!user
+        enabled: !!user && !!token
     });
 
     useEffect(() => {
@@ -36,17 +35,16 @@ const FinancialPlan = () => {
 
     const mutation = useMutation({
         mutationFn: async (data: any) => {
-            const token = await user?.getIdToken();
-            return axios.post('http://localhost:5000/api/financial/financial-plan', data, {
+            return axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/financial/financial-plan`, data, {
                 headers: { Authorization: `Bearer ${token}` }
             });
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['financialPlan'] });
-            toast.success('Financial plan updated successfully');
+            addToast('Financial plan updated successfully', 'success');
         },
         onError: () => {
-            toast.error('Failed to update financial plan');
+            addToast('Failed to update financial plan', 'error');
         }
     });
 
